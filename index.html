@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Indicações Parlamentares</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        #resultado { margin-top: 30px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; white-space: pre-wrap; }
+        .loading { color: #007bff; }
+    </style>
+</head>
+<body>
+
+    <h1>🤖 Gerador de Indicação Automática</h1>
+    <p>Insira o nome do arquivo, seguindo o padrão: 
+       **problema-rua-nome-numero-bairro** (ex: buraco-rua-ari-barroso-63-solemar.jpg).</p>
+    
+    <input type="text" id="filenameInput" placeholder="Ex: iluminacao-rua-silveira-150-tupi.jpg">
+    <button onclick="generateIndication()">Gerar Indicação</button>
+
+    <h2>Texto Gerado (Parágrafo Único):</h2>
+    <div id="resultado">Aguardando entrada...</div>
+
+    <script>
+        // 🚨 PASSO CRÍTICO: Cole a URL do Aplicativo Web que o Apps Script gerou aqui.
+        const API_APPSCRIPT_URL = 'URL_DA_SUA_API_APPSCRIPT'; 
+
+        async function generateIndication() {
+            const filename = document.getElementById('filenameInput').value.trim();
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (!filename) {
+                resultadoDiv.innerHTML = '🚨 Por favor, insira o nome do arquivo.';
+                return;
+            }
+
+            resultadoDiv.innerHTML = '<span class="loading">Gerando texto... Isso pode levar alguns segundos.</span>';
+
+            try {
+                // Monta o JSON que seu Apps Script espera
+                const dataToSend = { filename: filename };
+
+                const response = await fetch(API_APPSCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors', // Necessário para chamada entre domínios diferentes
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                const textoGerado = await response.text();
+
+                if (response.ok) {
+                    resultadoDiv.innerText = textoGerado;
+                } else {
+                    // Trata erros retornados pelo Apps Script ou Gemini
+                    resultadoDiv.innerHTML = `⚠️ Erro na API: ${textoGerado}`;
+                }
+
+            } catch (error) {
+                resultadoDiv.innerHTML = `❌ Erro de conexão (Verifique o CORS e a URL da API): ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
