@@ -3,41 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Gerador de Indicações Multimodal</title>
+    <title>🤖 Gerador de Indicações Multimodal (Apenas Botão)</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
-        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; box-sizing: border-box; }
         button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
         button:hover { background-color: #0056b3; }
         #resultado { margin-top: 30px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; white-space: pre-wrap; min-height: 100px; border-radius: 4px; }
         .loading { color: #007bff; }
+        .fixed-name { font-weight: bold; color: #d9534f; }
     </style>
 </head>
 <body>
 
     <h1>🤖 Gerador de Indicação Multimodal (Drive)</h1>
-    <p>Insira o nome do arquivo. O sistema fará a busca no Drive e a análise da imagem.</p>
+    <p>O sistema buscará e analisará a imagem do Drive automaticamente.</p>
     
-    <label for="filenameInput">Nome do Arquivo (Exato, Ex: vazamento-rua-guajaras-150-tupi.jpg):</label>
-    <input type="text" id="filenameInput" placeholder="Ex: iluminacao-rua-silveira-150-tupi.jpg">
+    <p>Nome do Arquivo Fixo para Teste: <span class="fixed-name" id="fixedFilename">
+        vazamento-rua-guajaras-150-tupi.jpg 
+    </span></p>
 
     <button onclick="generateIndication()">Gerar Indicação</button>
 
     <h2>Texto Gerado (Parágrafo Único):</h2>
-    <div id="resultado">Aguardando entrada...</div>
+    <div id="resultado">Aguardando geração...</div>
 
     <script>
         // 🚨 COLE A URL DO SEU APLICATIVO WEB DO APPS SCRIPT AQUI!
-        const API_APPSCRIPT_URL = 'URL_DA_SUA_API_APPSCRIPT'; 
+        const API_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxYgh-I2d1aDvZDF0GozdRmpQfnnx2DfYPy-ztpgjwWK3XTAttt_Mg8eTc6-L76t1dIw/exec'; 
 
         async function generateIndication() {
-            const filename = document.getElementById('filenameInput').value.trim();
+            // AQUI, VOCÊ PODE TER UMA LÓGICA PARA PEGAR O NOME DO ARQUIVO DINAMICAMENTE.
+            // Por enquanto, usamos o nome fixo para testar a integração.
+            const filename = document.getElementById('fixedFilename').innerText.trim();
             const resultadoDiv = document.getElementById('resultado');
-
-            if (!filename) {
-                resultadoDiv.innerHTML = '🚨 Por favor, preencha o Nome do Arquivo.';
-                return; 
-            }
 
             resultadoDiv.innerHTML = '<span class="loading">Gerando texto (Multimodal)... Isso pode levar alguns segundos.</span>';
 
