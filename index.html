@@ -1,69 +1,151 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🤖 Gerador de Indicações Multimodal (Apenas Botão)</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
-        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background-color: #0056b3; }
-        #resultado { margin-top: 30px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; white-space: pre-wrap; min-height: 100px; border-radius: 4px; }
-        .loading { color: #007bff; }
-        .fixed-name { font-weight: bold; color: #d9534f; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultado {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            min-height: 100px;
+            border-radius: 4px;
+        }
+
+        .loading {
+            color: #007bff;
+        }
+
+        .fixed-name {
+            font-weight: bold;
+            color: #d9534f;
+        }
     </style>
 </head>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Gerador de Indicações - Lote Drive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        button {
+            padding: 15px 25px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background-color: #c9302c;
+        }
+
+        #resultado {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            min-height: 100px;
+            border-radius: 4px;
+        }
+
+        .loading {
+            color: #d9534f;
+        }
+
+        h1 {
+            color: #d9534f;
+        }
+    </style>
+</head>
+
 <body>
 
-    <h1>🤖 Gerador de Indicação Multimodal (Drive)</h1>
-    <p>O sistema buscará e analisará a imagem do Drive automaticamente.</p>
-    
-    <p>Nome do Arquivo Fixo para Teste: <span class="fixed-name" id="fixedFilename">
-        vazamento-rua-guajaras-150-tupi.jpg 
-    </span></p>
+    <h1>🤖 Processamento em Lote do Drive</h1>
+    <p>Atenção: Este botão irá **processar todas as imagens** encontradas na pasta do Drive configurada e criar um
+        Google Doc para cada indicação.</p>
 
-    <button onclick="generateIndication()">Gerar Indicação</button>
 
-    <h2>Texto Gerado (Parágrafo Único):</h2>
-    <div id="resultado">Aguardando geração...</div>
+    <button onclick="generateBatch()">Processar TODA a Pasta do Drive</button>
+
+    <h2>Resultados Gerados:</h2>
+    <div id="resultado">Aguardando início do processamento...</div>
 
     <script>
         // 🚨 COLE A URL DO SEU APLICATIVO WEB DO APPS SCRIPT AQUI!
-        const API_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxYgh-I2d1aDvZDF0GozdRmpQfnnx2DfYPy-ztpgjwWK3XTAttt_Mg8eTc6-L76t1dIw/exec'; 
+        const API_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxYgh-I2d1aDvZDF0GozdRmpQfnnx2DfYPy-ztpgjwWK3XTAttt_Mg8eTc6-L76t1dIw/exec';
 
-        async function generateIndication() {
-            // AQUI, VOCÊ PODE TER UMA LÓGICA PARA PEGAR O NOME DO ARQUIVO DINAMICAMENTE.
-            // Por enquanto, usamos o nome fixo para testar a integração.
-            const filename = document.getElementById('fixedFilename').innerText.trim();
+        async function generateBatch() {
             const resultadoDiv = document.getElementById('resultado');
 
-            resultadoDiv.innerHTML = '<span class="loading">Gerando texto (Multimodal)... Isso pode levar alguns segundos.</span>';
+            // Mensagem de alerta para o usuário
+            if (!confirm("Tem certeza que deseja processar todos os arquivos da pasta? Isso pode levar tempo e consumir créditos de API.")) {
+                return;
+            }
+
+            resultadoDiv.innerHTML = '<span class="loading">Iniciando processamento em lote... Por favor, aguarde.</span>';
 
             try {
-                // Monta o JSON com APENAS o nome do arquivo
-                const dataToSend = { filename: filename };
-
+                // A requisição POST é enviada SEM CORPO DE DADOS, apenas para acionar o doPost no Apps Script.
                 const response = await fetch(API_APPSCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors', 
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(dataToSend)
+                    body: JSON.stringify({}) // Envia um JSON vazio
                 });
 
-                const textoGerado = await response.text();
+                const resultados = await response.text();
 
                 if (response.ok) {
-                    resultadoDiv.innerText = textoGerado;
+                    resultadoDiv.innerText = resultados;
                 } else {
-                    resultadoDiv.innerHTML = `⚠️ Erro na API ou no Apps Script: ${textoGerado}`;
+                    resultadoDiv.innerHTML = `⚠️ ERRO GERAL NO PROCESSAMENTO: ${resultados}`;
                 }
 
             } catch (error) {
-                resultadoDiv.innerHTML = `❌ Erro de conexão: Verifique sua URL. Detalhe: ${error.message}`;
+                resultadoDiv.innerHTML = `❌ Erro de conexão (Verifique sua URL): ${error.message}`;
             }
         }
     </script>
 </body>
+
 </html>
